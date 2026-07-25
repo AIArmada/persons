@@ -1,6 +1,8 @@
 <?php
 
 declare(strict_types=1);
+use AIArmada\Addressing\Models\AddressCountry;
+use AIArmada\Persons\Models\Person;
 
 $tablePrefix = '';
 
@@ -19,14 +21,13 @@ return [
             'credential_assignments' => env('PERSONS_TABLE_CREDENTIAL_ASSIGNMENTS', $tablePrefix . 'credential_assignments'),
             'affiliations' => env('PERSONS_TABLE_AFFILIATIONS', $tablePrefix . 'affiliations'),
             'affiliation_roles' => env('PERSONS_TABLE_AFFILIATION_ROLES', $tablePrefix . 'affiliation_roles'),
-            'languages' => env('PERSONS_TABLE_LANGUAGES', $tablePrefix . 'languages'),
         ],
     ],
 
     // Host application may subclass package models. Resolved through ModelResolver.
     'models' => [
-        'person' => env('PERSONS_MODEL_PERSON', \AIArmada\Persons\Models\Person::class),
-        'country' => env('PERSONS_MODEL_COUNTRY', \AIArmada\Addressing\Models\AddressCountry::class),
+        'person' => env('PERSONS_MODEL_PERSON', Person::class),
+        'country' => env('PERSONS_MODEL_COUNTRY', AddressCountry::class),
         'institution' => env('PERSONS_MODEL_INSTITUTION'),
     ],
 
