@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
     public function up(): void
     {
-        commerce_schema_create_if_missing(config('persons.database.tables.credential_assignments', 'credential_assignments'), function (Blueprint $table): void {
+        Schema::create(config('persons.database.tables.credential_assignments', 'credential_assignments'), function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->string('credentialable_type');
             $table->uuid('credentialable_id');
@@ -22,6 +23,7 @@ return new class extends Migration
             $table->timestampsTz();
 
             $table->index(['credentialable_type', 'credentialable_id']);
+            $table->index(['credentialable_type', 'credentialable_id', 'status'], 'credential_assignments_target_status_index');
         });
     }
 };

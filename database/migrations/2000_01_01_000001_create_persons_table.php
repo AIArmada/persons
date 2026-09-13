@@ -2,16 +2,19 @@
 
 declare(strict_types=1);
 
+use AIArmada\CommerceSupport\Support\ConnectionDriver;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
     public function up(): void
     {
         $jsonType = commerce_json_column_type('persons', 'jsonb');
+        $tableName = (string) config('persons.database.tables.persons', 'persons');
 
-        commerce_schema_create_if_missing(config('persons.database.tables.persons', 'persons'), function (Blueprint $table) use ($jsonType): void {
+        Schema::create($tableName, function (Blueprint $table) use ($jsonType): void {
             $table->uuid('id')->primary();
             $table->string('name');
             $table->string('family_name', 100)->nullable();
@@ -26,5 +29,23 @@ return new class extends Migration
             $table->timestampTz('published_at')->nullable()->index();
             $table->timestampsTz();
         });
+
+        if (ConnectionDriver::name(Schema::getConnection()) === 'mysql') {
+            Schema::table($tableName, function (Blueprint $table): void {
+                $table->unique('slug', 'persons_slug_unique');
+            });
+
+            return;
+        }
+
+        $grammar = Schema::getConnection()->getQueryGrammar();
+
+        Schema::getConnection()->statement(sprintf(
+            'CREATE UNIQUE INDEX %s ON %s (%s) WHERE %s IS NOT NULL',
+            $grammar->wrap('persons_slug_unique'),
+            $grammar->wrapTable($tableName),
+            $grammar->wrap('slug'),
+            $grammar->wrap('slug'),
+        ));
     }
 };

@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
     public function up(): void
     {
-        commerce_schema_create_if_missing(config('persons.database.tables.title_assignments', 'title_assignments'), function (Blueprint $table): void {
+        Schema::create(config('persons.database.tables.title_assignments', 'title_assignments'), function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->string('titleable_type');
             $table->uuid('titleable_id');
@@ -21,6 +22,7 @@ return new class extends Migration
             $table->timestampsTz();
 
             $table->index(['titleable_type', 'titleable_id']);
+            $table->index(['titleable_type', 'titleable_id', 'status'], 'title_assignments_target_status_index');
         });
     }
 };
