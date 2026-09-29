@@ -49,9 +49,9 @@ maintaining `published_at`.
 
 `PersonName` primary status is scoped by `(person_id, name_type,
 language_code)`. The model transaction locks the parent person before
-demoting siblings. The `person_names` migration also creates the
-`person_names_primary_unique` partial unique index and the
-`(person_id, is_primary)` covering index as a database backstop.
+demoting siblings, and a driver-conditional partial unique index
+(`person_names_primary_unique`) plus the `person_names_person_primary_index`
+covering index are the database backstop.
 
 ## Media
 
